@@ -1,0 +1,52 @@
+{
+  "name": "electric-markdown",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "lint": "eslint . --ext .ts --fix",
+    "start": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csLiKevin/electric-markdown.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/csLiKevin/electric-markdown/issues"
+  },
+  "homepage": "https://github.com/csLiKevin/electric-markdown#readme",
+  "devDependencies": {
+    "@types/browser-sync": "^2.26.1",
+    "@types/express": "^4.17.9",
+    "@typescript-eslint/eslint-plugin": "^4.9.1",
+    "@typescript-eslint/parser": "^4.9.1",
+    "browser-sync": "^2.26.13",
+    "eslint": "^7.15.0",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-plugin-prettier": "^3.2.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6",
+    "prettier": "^2.2.1",
+    "pug": "^3.0.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "extends": [
+      "plugin:@typescript-eslint/recommended",
+      "prettier/@typescript-eslint",
+      "plugin:prettier/recommended"
+    ]
+  },
+  "nodemonConfig": {
+    "exec": "ts-node index.ts",
+    "ext": "ts"
+  },
+  "prettier": {
+    "tabWidth": 4
+  }
+}
