@@ -1,31 +1,129 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="types.d.ts"/>
-import doc from "rehype-document";
-import format from "rehype-format";
-import html from "rehype-stringify";
-import markdown from "remark-parse";
-import remark2rehype from "remark-rehype";
-import remark2retext from "remark-retext";
-import english from "retext-english";
-import indefiniteArticle from "retext-indefinite-article";
+import dictionary from "dictionary-en";
+import { safeLoad } from "js-yaml";
+import { rehypeAccessibleEmojis } from "rehype-accessible-emojis";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeDocument from "rehype-document";
+import rehypeFormat from "rehype-format";
+import rehypeStringify from "rehype-stringify";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
+import rehypeSlug from "rehype-slug";
+import remarkCapitalize from "remark-capitalize";
+import remarkEmoji from "remark-emoji";
+import remarkExternalLinks from "remark-external-links";
+import remarkFootnotes from "remark-footnotes";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkGfm from "remark-gfm";
+import remarkNormalizeHeadings from "remark-normalize-headings";
+import remarkNumberedFootnoteLabels from "remark-numbered-footnote-labels";
+import remarkParse from "remark-parse";
+import remarkPresetLint from "remark-preset-lint-markdown-style-guide";
+import remarkToRehype from "remark-rehype";
+import remarkToRetext from "remark-retext";
+import remarkSmartypants from "@silvenon/remark-smartypants";
+import remarkValidateLinks from "remark-validate-links";
+import retextAssuming from "retext-assuming";
+import retextContractions from "retext-contractions";
+import retextDiacritics from "retext-diacritics";
+import retextEnglish from "retext-english";
+import retextIndefiniteArticle from "retext-indefinite-article";
+import retextIntensify from "retext-intensify";
+import retextOveruse from "retext-overuse";
+import retextPassive from "retext-passive";
+import retextProfanities from "retext-profanities";
+import retextReadability from "retext-readability";
+import retextRedundantAcronyms from "retext-redundant-acronyms";
+import retextRepeatedWords from "retext-repeated-words";
+import retextSentenceSpacing from "retext-sentence-spacing";
+import retextSimplify from "retext-simplify";
+import retextSpell from "retext-spell";
 import { read } from "to-vfile";
 import { VFileCompatible, VFile } from "vfile";
 import reporter from "vfile-reporter";
-import unified from "unified";
+import unified, { Transformer } from "unified";
+import { Parent } from "unist";
 
-const processor = unified()
-    .use(markdown)
-    .use(remark2retext, unified().use(english).use(indefiniteArticle))
-    .use(remark2rehype)
-    .use(doc, { title: "Contents" })
-    .use(format)
-    .use(html);
+function remarkFrontmatterYaml(): Transformer {
+    return (node, vFile) => {
+        const { children } = node as Parent;
+        if (!children.length) {
+            return;
+        }
+
+        const { type, value } = children[0];
+        if (type !== "yaml") {
+            return;
+        }
+
+        (vFile.data as Record<string, unknown>).frontmatter = safeLoad(
+            value as string
+        );
+    };
+}
+
+function retextShim(): Transformer {
+    return (_, vFile) => {
+        // Hack for plugins using an old version of vfile.
+        vFile.warn = vFile.message;
+    };
+}
+
+const transformer = unified()
+    .use(remarkParse)
+    .use(remarkCapitalize)
+    .use(remarkEmoji)
+    .use(remarkExternalLinks, {
+        target: "_blank",
+        rel: ["nofollow", "noopener", "noreferrer"],
+    })
+    .use(remarkFootnotes)
+    .use(remarkFrontmatter)
+    .use(remarkFrontmatterYaml) // Must come after remarkFrontmatter.
+    .use(remarkGfm)
+    .use(remarkNormalizeHeadings)
+    .use(remarkNumberedFootnoteLabels)
+    .use(remarkPresetLint)
+    .use(remarkSmartypants)
+    .use(remarkValidateLinks)
+    .use(
+        remarkToRetext,
+        unified()
+            .use(retextShim)
+            .use(retextEnglish)
+            .use(retextAssuming) // Needs shim.
+            // .use(retextCliches)
+            .use(retextContractions)
+            .use(retextDiacritics)
+            .use(retextIndefiniteArticle)
+            .use(retextIntensify)
+            .use(retextOveruse) // Needs shim. Potential performance issues.
+            .use(retextPassive)
+            .use(retextProfanities)
+            .use(retextReadability)
+            .use(retextRedundantAcronyms)
+            .use(retextRepeatedWords)
+            .use(retextSentenceSpacing)
+            .use(retextSimplify)
+            .use(retextSpell, dictionary)
+        // .use(retextUsage)
+    )
+    .use(remarkToRehype, { allowDangerousHtml: true })
+    .use(rehypeRaw) // Must come after remarkToRehype.
+    .use(rehypeAccessibleEmojis)
+    .use(rehypeSlug)
+    .use(rehypeAutolinkHeadings) // Must come after remarkSlug.
+    .use(rehypeFormat)
+    .use(rehypeSanitize) // Safer to sanitize at the end.
+    .use(rehypeDocument, { title: "Contents" }) // Must come after rehypeSanitize.
+    .use(rehypeStringify);
 
 export async function transform(
     vFileCompatible: VFileCompatible
 ): Promise<VFile> {
     const vFile = await read(vFileCompatible);
-    await processor.process(vFile);
+    await transformer.process(vFile);
     console.log(reporter(vFile));
     return vFile;
 }

@@ -1,6 +1,15 @@
-# 2020 Haiku
+---
+tags: [covid-19, haiku, "poem"]
+title: 2020 Haiku
+publishDate: 2020-12-06
+updateDate: null
+---
 
-2020 December 6
+# {{ title }}
+
+{{ publishDate }}
+
+{{ updateDate }}
 
 ![image of haiku](haiku.jpg)
 
