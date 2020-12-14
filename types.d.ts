@@ -9,10 +9,9 @@ declare module "remark-emoji";
 declare module "remark-normalize-headings";
 declare module "remark-numbered-footnote-labels";
 declare module "remark-preset-lint-markdown-style-guide";
+declare module "remark-retext";
 declare module "@silvenon/remark-smartypants";
 declare module "remark-validate-links";
-
-declare module "remark-retext";
 
 declare module "retext-assuming";
 declare module "retext-contractions";

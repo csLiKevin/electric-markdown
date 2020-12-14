@@ -43,23 +43,47 @@ import { read } from "to-vfile";
 import { VFileCompatible, VFile } from "vfile";
 import reporter from "vfile-reporter";
 import unified, { Transformer } from "unified";
-import { Parent } from "unist";
+import visit from "unist-util-visit";
+
+type VFileData = Record<string, unknown>;
 
 function remarkFrontmatterYaml(): Transformer {
     return (node, vFile) => {
-        const { children } = node as Parent;
-        if (!children.length) {
-            return;
-        }
+        visit(node, "yaml", ({ value }) => {
+            const data = vFile.data as { frontmatter: VFileData };
+            data.frontmatter = {
+                ...data.frontmatter,
+                ...(safeLoad(value as string) as VFileData),
+            };
+        });
+    };
+}
 
-        const { type, value } = children[0];
-        if (type !== "yaml") {
-            return;
-        }
+function remarkVariables(): Transformer {
+    const regex = /{{ *(?<variable>[\w\.]+) *}}/g;
 
-        (vFile.data as Record<string, unknown>).frontmatter = safeLoad(
-            value as string
-        );
+    return (node, vFile) => {
+        const data = vFile.data as VFileData;
+
+        visit(node, "text", (node) => {
+            const value = node.value as string;
+            const matches = Array.from(value.matchAll(regex));
+
+            node.value = matches.reduce((value, [match, variable]) => {
+                const variableValue = variable
+                    .split(".")
+                    .reduce(
+                        (obj, property) => obj[property] as VFileData,
+                        data
+                    ) as unknown;
+
+                if (!variableValue) {
+                    return value;
+                }
+
+                return value.replace(match, variableValue as string);
+            }, value);
+        });
     };
 }
 
@@ -72,6 +96,9 @@ function retextShim(): Transformer {
 
 const transformer = unified()
     .use(remarkParse)
+    .use(remarkFrontmatter)
+    .use(remarkFrontmatterYaml) // Must come after remarkFrontmatter.
+    .use(remarkVariables) // Must come after plugins that update VFileData and before any transformations.
     .use(remarkCapitalize)
     .use(remarkEmoji)
     .use(remarkExternalLinks, {
@@ -79,8 +106,6 @@ const transformer = unified()
         rel: ["nofollow", "noopener", "noreferrer"],
     })
     .use(remarkFootnotes)
-    .use(remarkFrontmatter)
-    .use(remarkFrontmatterYaml) // Must come after remarkFrontmatter.
     .use(remarkGfm)
     .use(remarkNormalizeHeadings)
     .use(remarkNumberedFootnoteLabels)

@@ -5,6 +5,4 @@
 - Style Auto Linked Heading anchors.
     - Currently invisible because fontawesome is missing.
     - Use Mono icons.
-- Create a remark string replace plugin.
-    - Replace syntax `{{ key }}`.
-    - Values should come from frontmatter.
+- Remove rehypeDocument and use pug templates to manage shared HTML.

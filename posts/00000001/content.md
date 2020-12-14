@@ -5,11 +5,13 @@ publishDate: 2020-12-06
 updateDate: null
 ---
 
-# {{ title }}
+# {{ frontmatter.title }}
 
-{{ publishDate }}
+Published on {{ frontmatter.publishDate }}
 
 {{ updateDate }}
+
+[{{ frontmatter.tags.0 }}, {{ frontmatter.tags.1 }}, {{ frontmatter.tags.2 }}]
 
 ![image of haiku](haiku.jpg)
 
