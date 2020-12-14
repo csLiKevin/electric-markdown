@@ -4,7 +4,6 @@ import dictionary from "dictionary-en";
 import { safeLoad } from "js-yaml";
 import { rehypeAccessibleEmojis } from "rehype-accessible-emojis";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeDocument from "rehype-document";
 import rehypeFormat from "rehype-format";
 import rehypeStringify from "rehype-stringify";
 import rehypeRaw from "rehype-raw";
@@ -45,7 +44,13 @@ import reporter from "vfile-reporter";
 import unified, { Transformer } from "unified";
 import visit from "unist-util-visit";
 
+const production = process.env.NODE_ENV === "production";
+
 type VFileData = Record<string, unknown>;
+
+function noOpAttacher(): void {
+    return undefined;
+}
 
 function remarkFrontmatterYaml(): Transformer {
     return (node, vFile) => {
@@ -109,11 +114,11 @@ const transformer = unified()
     .use(remarkGfm)
     .use(remarkNormalizeHeadings)
     .use(remarkNumberedFootnoteLabels)
-    .use(remarkPresetLint)
+    .use(production ? noOpAttacher : remarkPresetLint)
     .use(remarkSmartypants)
-    .use(remarkValidateLinks)
+    .use(production ? noOpAttacher : remarkValidateLinks)
     .use(
-        remarkToRetext,
+        production ? noOpAttacher : remarkToRetext,
         unified()
             .use(retextShim)
             .use(retextEnglish)
@@ -141,7 +146,6 @@ const transformer = unified()
     .use(rehypeAutolinkHeadings) // Must come after remarkSlug.
     .use(rehypeFormat)
     .use(rehypeSanitize) // Safer to sanitize at the end.
-    .use(rehypeDocument, { title: "Contents" }) // Must come after rehypeSanitize.
     .use(rehypeStringify);
 
 export async function transform(
@@ -149,6 +153,6 @@ export async function transform(
 ): Promise<VFile> {
     const vFile = await read(vFileCompatible);
     await transformer.process(vFile);
-    console.log(reporter(vFile));
+    !production && console.log(reporter(vFile));
     return vFile;
 }
