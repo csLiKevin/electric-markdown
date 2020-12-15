@@ -1,0 +1,18 @@
+extends base.pug
+
+block globals
+    - const { tags, title } = data.frontmatter;
+
+block append head
+    title= title
+    style.
+        .tag:not(:last-child) {
+            margin-right: 8px;
+        }
+
+block append body
+    | !{contents}
+    h6 Tags
+    each tag in tags
+        span.tag.
+            [#[a(href=`/tag/${tag}/`) #{tag}]]

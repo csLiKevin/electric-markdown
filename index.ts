@@ -21,8 +21,8 @@ app.get("/posts/:postId", async (request, response, next) => {
     const { url } = request;
     const path = join(url.substring(1), "content.md");
     try {
-        const { contents } = await transform(path);
-        response.send(contents);
+        const vFile = await transform(path);
+        response.render("post", vFile);
     } catch (error) {
         next(error);
     }
