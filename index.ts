@@ -1,6 +1,6 @@
 import { create } from "browser-sync";
 import express from "express";
-import { getPost, getPosts } from "./src/helpers";
+import { getPost, getPostIds, getPosts } from "./src/helpers";
 
 const app = express();
 
@@ -9,11 +9,14 @@ app.set("view engine", "pug");
 
 app.use(express.static("."));
 
-app.get("/", (_, response) => {
-    response.render("index", {
-        title: "Hey",
-        message: "Hello there!",
-    });
+app.get("/", async (_, response, next) => {
+    try {
+        const postIds = await getPostIds();
+        const post = await getPost(postIds[0]);
+        response.render("post", post);
+    } catch (error) {
+        next(error);
+    }
 });
 
 app.get("/posts", async (request, response, next) => {
