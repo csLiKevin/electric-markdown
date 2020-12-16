@@ -1,6 +1,6 @@
 import { create } from "browser-sync";
 import express from "express";
-import { getPost, getPosts } from "./helpers";
+import { getPost, getPosts } from "./src/helpers";
 
 const app = express();
 

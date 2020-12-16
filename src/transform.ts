@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="types.d.ts"/>
+/// <reference path="./types.d.ts"/>
 import dictionary from "dictionary-en";
 import { safeLoad } from "js-yaml";
 import { join, relative } from "path";
