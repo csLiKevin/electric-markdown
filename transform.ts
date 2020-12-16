@@ -2,6 +2,7 @@
 /// <reference path="types.d.ts"/>
 import dictionary from "dictionary-en";
 import { safeLoad } from "js-yaml";
+import { join, relative } from "path";
 import { rehypeAccessibleEmojis } from "rehype-accessible-emojis";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeFormat from "rehype-format";
@@ -43,10 +44,12 @@ import { VFileCompatible, VFile } from "vfile";
 import reporter from "vfile-reporter";
 import unified, { Transformer } from "unified";
 import visit from "unist-util-visit";
+import { URL } from "url";
+import { Node } from "unist";
 
 const production = process.env.NODE_ENV === "production";
 
-type VFileData = Record<string, unknown>;
+export type VFileData = Record<string, unknown>;
 
 function noOpAttacher(): void {
     return undefined;
@@ -92,6 +95,31 @@ function remarkVariables(): Transformer {
     };
 }
 
+function remarkUrls(): Transformer {
+    // Convert relative url paths to absolute url paths.
+    function transformUrl(node: Node, directoryName: string): void {
+        const url = node.url as string;
+
+        // Ignore absolute urls.
+        try {
+            new URL(url);
+            return;
+        } catch (error) {}
+
+        // Must start with /. Replace \ with / on Windows.
+        node.url = `/${relative(".", join(directoryName, url)).replace(
+            /\\/g,
+            "/"
+        )}`;
+    }
+
+    return (node, vFile) => {
+        visit(node, ["image", "link"], (node) => {
+            transformUrl(node, vFile.dirname || "");
+        });
+    };
+}
+
 function retextShim(): Transformer {
     return (_, vFile) => {
         // Hack for plugins using an old version of vfile.
@@ -117,6 +145,7 @@ const transformer = unified()
     .use(production ? noOpAttacher : remarkPresetLint)
     .use(remarkSmartypants)
     .use(production ? noOpAttacher : remarkValidateLinks)
+    .use(remarkUrls) // Must come after remarkValidateLinks.
     .use(
         production ? noOpAttacher : remarkToRetext,
         unified()

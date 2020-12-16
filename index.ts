@@ -1,7 +1,6 @@
 import { create } from "browser-sync";
 import express from "express";
-import { join } from "path";
-import { transform } from "./transform";
+import { getPost, getPosts } from "./helpers";
 
 const app = express();
 
@@ -17,12 +16,27 @@ app.get("/", (_, response) => {
     });
 });
 
-app.get("/posts/:postId", async (request, response, next) => {
-    const { url } = request;
-    const path = join(url.substring(1), "content.md");
+app.get("/posts", async (request, response, next) => {
+    const {
+        query: { page },
+    } = request;
+
     try {
-        const vFile = await transform(path);
-        response.render("post", vFile);
+        const posts = await getPosts(Number(page));
+        response.render("posts", { posts: posts, title: "Posts" });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get("/posts/:postId", async (request, response, next) => {
+    const {
+        params: { postId },
+    } = request;
+
+    try {
+        const post = await getPost(postId);
+        response.render("post", post);
     } catch (error) {
         next(error);
     }

@@ -1,0 +1,15 @@
+extends base.pug
+
+block append head
+    title= title
+    style.
+        .preview {
+            max-height: 350px;
+            overflow: hidden;
+        }
+
+block append body
+    each post in posts
+        div
+            div.preview!= post
+            a(href=post.data.url) Read More
