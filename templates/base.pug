@@ -4,5 +4,20 @@ html(lang="en")
     head
         block head
             link(href="/static/water.min.css" rel="stylesheet")
+            title= title
+            style.
+                .icon.icon-link {
+                    margin-right: 8px;
+                }
+                .icon.icon-link:after {
+                    content: "#";
+                }
+                .preview {
+                    max-height: 350px;
+                    overflow: hidden;
+                }
+                .tag:not(:last-child) {
+                    margin-right: 8px;
+                }
     body
         block body

@@ -132,8 +132,8 @@ const transformer = unified()
     .use(remarkFrontmatter)
     .use(remarkFrontmatterYaml) // Must come after remarkFrontmatter.
     .use(remarkVariables) // Must come after plugins that update VFileData and before any transformations.
-    .use(remarkCapitalize)
     .use(remarkEmoji)
+    .use(remarkCapitalize) // Must come after remarkEmoji.
     .use(remarkExternalLinks, {
         target: "_blank",
         rel: ["nofollow", "noopener", "noreferrer"],
@@ -170,11 +170,11 @@ const transformer = unified()
     )
     .use(remarkToRehype, { allowDangerousHtml: true })
     .use(rehypeRaw) // Must come after remarkToRehype.
+    .use(rehypeSanitize)
     .use(rehypeAccessibleEmojis)
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings) // Must come after remarkSlug.
     .use(rehypeFormat)
-    .use(rehypeSanitize) // Safer to sanitize at the end.
     .use(rehypeStringify);
 
 export async function transform(

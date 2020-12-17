@@ -1,4 +1,7 @@
 extends base.pug
 
+block globals
+    - const { title } = data.frontmatter
+
 block append body
     | !{contents}

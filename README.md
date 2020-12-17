@@ -2,6 +2,9 @@
 
 ## TODO
 
-- Style Auto Linked Heading anchors.
-    - Currently invisible because fontawesome is missing.
-    - Use Mono icons.
+- Add an icon set (Mono Icons)?.
+- Create an editor that shows the Markdown and HTML side by side.
+    - Should highlight lines that have warnings.
+- Add a configuration file.
+    - Specify site name.
+    - Specify which post should be the home page.

@@ -13,7 +13,7 @@ app.get("/", async (_, response, next) => {
     try {
         const postIds = await getPostIds();
         const post = await getPost(postIds[0]);
-        response.render("post", post);
+        response.render("index", post);
     } catch (error) {
         next(error);
     }
