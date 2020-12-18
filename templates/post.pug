@@ -8,7 +8,7 @@ block append body
     h6 Tags
     p
         - if (!tags.length)
-            span none
+            code [none]
         each tag in tags
-            span.tag.
+            code.tag.
                 [#[a(href=`/tag/${tag}/`) #{tag}]]

@@ -2,7 +2,7 @@
 /// <reference path="./types.d.ts"/>
 import dictionary from "dictionary-en";
 import { safeLoad } from "js-yaml";
-import { join, relative } from "path";
+import { join } from "path";
 import { rehypeAccessibleEmojis } from "rehype-accessible-emojis";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeFormat from "rehype-format";
@@ -11,7 +11,6 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import rehypeSlug from "rehype-slug";
 import remarkCapitalize from "remark-capitalize";
-import remarkEmoji from "remark-emoji";
 import remarkExternalLinks from "remark-external-links";
 import remarkFootnotes from "remark-footnotes";
 import remarkFrontmatter from "remark-frontmatter";
@@ -46,6 +45,7 @@ import unified, { Transformer } from "unified";
 import visit from "unist-util-visit";
 import { URL } from "url";
 import { Node } from "unist";
+import { toAbsoluteUrl } from "./helpers";
 
 const production = process.env.NODE_ENV === "production";
 
@@ -100,17 +100,17 @@ function remarkUrls(): Transformer {
     function transformUrl(node: Node, directoryName: string): void {
         const url = node.url as string;
 
+        if (!url) {
+            return;
+        }
+
         // Ignore absolute urls.
         try {
             new URL(url);
             return;
         } catch (error) {}
 
-        // Must start with /. Replace \ with / on Windows.
-        node.url = `/${relative(".", join(directoryName, url)).replace(
-            /\\/g,
-            "/"
-        )}`;
+        node.url = toAbsoluteUrl(join(directoryName, url));
     }
 
     return (node, vFile) => {
@@ -132,8 +132,7 @@ const transformer = unified()
     .use(remarkFrontmatter)
     .use(remarkFrontmatterYaml) // Must come after remarkFrontmatter.
     .use(remarkVariables) // Must come after plugins that update VFileData and before any transformations.
-    .use(remarkEmoji)
-    .use(remarkCapitalize) // Must come after remarkEmoji.
+    .use(remarkCapitalize)
     .use(remarkExternalLinks, {
         target: "_blank",
         rel: ["nofollow", "noopener", "noreferrer"],

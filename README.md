@@ -8,3 +8,9 @@
 - Add a configuration file.
     - Specify site name.
     - Specify which post should be the home page.
+    - Specify if pots should be ordered by post id or publish date.
+- Prevent posts with no publish date from being included in the generated files.
+- Posts page should be paginated.
+- Create a header banner.
+- Create a tags page.
+- Add search.

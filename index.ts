@@ -1,10 +1,16 @@
 import { create } from "browser-sync";
 import express from "express";
+import {
+    INDEX_TEMPLATE,
+    POSTS_TEMPLATE,
+    POST_TEMPLATE,
+    TEMPLATES_DIRECTORY,
+} from "./src/constants";
 import { getPost, getPostIds, getPosts } from "./src/helpers";
 
 const app = express();
 
-app.set("views", "templates");
+app.set("views", TEMPLATES_DIRECTORY);
 app.set("view engine", "pug");
 
 app.use(express.static("."));
@@ -13,7 +19,7 @@ app.get("/", async (_, response, next) => {
     try {
         const postIds = await getPostIds();
         const post = await getPost(postIds[0]);
-        response.render("index", post);
+        response.render(INDEX_TEMPLATE, post);
     } catch (error) {
         next(error);
     }
@@ -26,7 +32,7 @@ app.get("/posts", async (request, response, next) => {
 
     try {
         const posts = await getPosts(Number(page));
-        response.render("posts", { posts: posts, title: "Posts" });
+        response.render(POSTS_TEMPLATE, { posts: posts, title: "Posts" });
     } catch (error) {
         next(error);
     }
@@ -39,7 +45,7 @@ app.get("/posts/:postId", async (request, response, next) => {
 
     try {
         const post = await getPost(postId);
-        response.render("post", post);
+        response.render(POST_TEMPLATE, post);
     } catch (error) {
         next(error);
     }
