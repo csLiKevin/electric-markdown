@@ -1,5 +1,7 @@
 # electric-markdown
 
+https://electric.kevinli.us · https://csLiKevin.github.io/electric-markdown
+
 ## TODO
 
 - Add an icon set (Mono Icons)?.

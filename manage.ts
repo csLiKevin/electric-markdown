@@ -71,13 +71,15 @@ demandCommand()
                 join(TEMPLATES_DIRECTORY, POSTS_TEMPLATE)
             );
             for (const page of pages) {
-                console.log(
-                    "Build posts page is not implemented.",
-                    postsTemplate
+                const posts = await Promise.all(
+                    page.map((postId) => getPost(postId))
+                );
+                await writeFile(
+                    join(BUILD_DIRECTORY, POSTS_DIRECTORY, "index.html"),
+                    postsTemplate({ posts: posts })
                 );
 
-                for (const postId of page) {
-                    const post = await getPost(postId);
+                for (const post of posts) {
                     const { dirname = "" } = post;
                     await copyDirectory(dirname, BUILD_DIRECTORY);
                     await writeFile(
