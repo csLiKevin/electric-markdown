@@ -14,7 +14,7 @@ import {
     POST_TEMPLATE,
     TEMPLATES_DIRECTORY,
 } from "./constants";
-import { getPost, getPostIds, paginate } from "./helpers";
+import { deleteGeneratedFiles, getPost, getPostIds, paginate } from "./helpers";
 import { template } from "../templates/content";
 
 const { mkdir, writeFile } = promises;
@@ -84,6 +84,14 @@ demandCommand()
                     );
                 }
             }
+        }
+    )
+    .command(
+        "clean",
+        "delete generated files",
+        () => undefined,
+        async () => {
+            await deleteGeneratedFiles();
         }
     )
     .strict()

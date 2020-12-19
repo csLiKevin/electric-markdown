@@ -1,11 +1,11 @@
 import { promises } from "fs";
-import { dirname, join, relative } from "path";
+import { join, relative } from "path";
 import { VFile } from "vfile";
 import { config } from "./config";
-import { CONTENT_FILE, POSTS_DIRECTORY } from "./constants";
+import { CONTENT_FILE, INDEX_FILE, POSTS_DIRECTORY } from "./constants";
 import { transform, VFileData } from "./transform";
 
-const { copyFile, opendir, readdir, mkdir } = promises;
+const { unlink, opendir, readdir } = promises;
 
 export async function getPost(postId: string): Promise<VFile> {
     const path = join(POSTS_DIRECTORY, postId, CONTENT_FILE);
@@ -74,13 +74,14 @@ async function* walk(path: string): AsyncGenerator<string, void, void> {
     }
 }
 
-export async function copyDirectory(
-    path: string,
-    destination: string
-): Promise<void> {
-    for await (const filePath of walk(path)) {
-        const newFilePath = join(destination, filePath);
-        await mkdir(dirname(newFilePath), { recursive: true });
-        await copyFile(filePath, newFilePath);
+export async function deleteGeneratedFiles(): Promise<void> {
+    for await (const filePath of walk(POSTS_DIRECTORY)) {
+        if (filePath.endsWith(INDEX_FILE)) {
+            console.log("Deleting:", filePath);
+            await unlink(filePath);
+        }
     }
+
+    console.log("Deleting:", INDEX_FILE);
+    await unlink(INDEX_FILE);
 }
