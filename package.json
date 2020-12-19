@@ -2,10 +2,10 @@
   "name": "electric-markdown",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "lint": "eslint . --ext .ts --fix",
-    "manage": "ts-node manage.ts",
+    "manage": "ts-node src/manage.ts",
     "start": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -92,7 +92,7 @@
     ]
   },
   "nodemonConfig": {
-    "exec": "ts-node index.ts",
+    "exec": "ts-node src/index.ts",
     "ext": "ts"
   },
   "prettier": {

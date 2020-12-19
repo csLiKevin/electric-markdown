@@ -4,7 +4,7 @@ import { promises } from "fs";
 import { join } from "path";
 import { compileFile } from "pug";
 import { demandCommand } from "yargs";
-import { config } from "./src/config";
+import { config } from "./config";
 import {
     CONTENT_FILE,
     INDEX_FILE,
@@ -13,9 +13,9 @@ import {
     POSTS_TEMPLATE,
     POST_TEMPLATE,
     TEMPLATES_DIRECTORY,
-} from "./src/constants";
-import { getPost, getPostIds, paginate } from "./src/helpers";
-import { template } from "./templates/content";
+} from "./constants";
+import { getPost, getPostIds, paginate } from "./helpers";
+import { template } from "../templates/content";
 
 const { mkdir, writeFile } = promises;
 

@@ -40,7 +40,7 @@ Site automatically reloads when Markdown files are updated.
 
 ## Configuration
 
-Configure how the site is generated in [config.ts](../../config.ts).
+Configure how the site is generated in [config.ts](../../src/config.ts).
 
 |key|default|description|
 |---           |---                |---                      |

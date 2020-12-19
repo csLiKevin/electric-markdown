@@ -1,13 +1,13 @@
 import { create } from "browser-sync";
 import express, { NextFunction } from "express";
-import { config } from "./src/config";
+import { config } from "./config";
 import {
     INDEX_TEMPLATE,
     POSTS_TEMPLATE,
     POST_TEMPLATE,
     TEMPLATES_DIRECTORY,
-} from "./src/constants";
-import { getPost, getPosts } from "./src/helpers";
+} from "./constants";
+import { getPost, getPosts } from "./helpers";
 
 async function asyncResponse(
     callback: () => Promise<void>,
