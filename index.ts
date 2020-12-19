@@ -1,12 +1,24 @@
 import { create } from "browser-sync";
-import express from "express";
+import express, { NextFunction } from "express";
+import { config } from "./src/config";
 import {
     INDEX_TEMPLATE,
     POSTS_TEMPLATE,
     POST_TEMPLATE,
     TEMPLATES_DIRECTORY,
 } from "./src/constants";
-import { getPost, getPostIds, getPosts } from "./src/helpers";
+import { getPost, getPosts } from "./src/helpers";
+
+async function asyncResponse(
+    callback: () => Promise<void>,
+    next: NextFunction
+) {
+    try {
+        await callback();
+    } catch (error) {
+        next(error);
+    }
+}
 
 const app = express();
 
@@ -16,13 +28,11 @@ app.set("view engine", "pug");
 app.use(express.static("."));
 
 app.get("/", async (_, response, next) => {
-    try {
-        const postIds = await getPostIds();
-        const post = await getPost(postIds[0]);
+    await asyncResponse(async () => {
+        const { homepage } = config;
+        const post = await getPost(homepage);
         response.render(INDEX_TEMPLATE, post);
-    } catch (error) {
-        next(error);
-    }
+    }, next);
 });
 
 app.get("/posts", async (request, response, next) => {
@@ -30,12 +40,14 @@ app.get("/posts", async (request, response, next) => {
         query: { page },
     } = request;
 
-    try {
+    await asyncResponse(async () => {
         const posts = await getPosts(Number(page));
-        response.render(POSTS_TEMPLATE, { posts: posts, title: "Posts" });
-    } catch (error) {
-        next(error);
-    }
+        response.render(POSTS_TEMPLATE, {
+            posts: posts,
+            title: "Posts",
+            ...config,
+        });
+    }, next);
 });
 
 app.get("/posts/:postId", async (request, response, next) => {
@@ -43,12 +55,10 @@ app.get("/posts/:postId", async (request, response, next) => {
         params: { postId },
     } = request;
 
-    try {
+    await asyncResponse(async () => {
         const post = await getPost(postId);
         response.render(POST_TEMPLATE, post);
-    } catch (error) {
-        next(error);
-    }
+    }, next);
 });
 
 app.listen(3000);

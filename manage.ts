@@ -4,17 +4,17 @@ import { promises } from "fs";
 import { join } from "path";
 import { compileFile } from "pug";
 import { demandCommand } from "yargs";
+import { config } from "./src/config";
 import {
-    BUILD_DIRECTORY,
     CONTENT_FILE,
+    INDEX_FILE,
     INDEX_TEMPLATE,
     POSTS_DIRECTORY,
     POSTS_TEMPLATE,
     POST_TEMPLATE,
-    STATIC_DIRECTORY,
     TEMPLATES_DIRECTORY,
 } from "./src/constants";
-import { copyDirectory, getPost, getPostIds, paginate } from "./src/helpers";
+import { getPost, getPostIds, paginate } from "./src/helpers";
 import { template } from "./templates/content";
 
 const { mkdir, writeFile } = promises;
@@ -49,41 +49,37 @@ demandCommand()
         "build static website",
         () => undefined,
         async () => {
-            const postIds = await getPostIds();
-            const pages = paginate(postIds, 10);
-
-            await mkdir(BUILD_DIRECTORY, { recursive: true });
-
-            await copyDirectory(STATIC_DIRECTORY, BUILD_DIRECTORY);
-
             const homepageTemplate = compileFile(
                 join(TEMPLATES_DIRECTORY, INDEX_TEMPLATE)
             );
-            await writeFile(
-                join(BUILD_DIRECTORY, "index.html"),
-                homepageTemplate(await getPost(postIds[0]))
-            );
-
             const postTemplate = compileFile(
                 join(TEMPLATES_DIRECTORY, POST_TEMPLATE)
             );
             const postsTemplate = compileFile(
                 join(TEMPLATES_DIRECTORY, POSTS_TEMPLATE)
             );
+
+            const { homepage } = config;
+            await writeFile(
+                INDEX_FILE,
+                homepageTemplate(await getPost(homepage))
+            );
+
+            const postIds = await getPostIds();
+            const pages = paginate(postIds, 10);
             for (const page of pages) {
                 const posts = await Promise.all(
                     page.map((postId) => getPost(postId))
                 );
                 await writeFile(
-                    join(BUILD_DIRECTORY, POSTS_DIRECTORY, "index.html"),
-                    postsTemplate({ posts: posts })
+                    join(POSTS_DIRECTORY, INDEX_FILE),
+                    postsTemplate({ posts: posts, ...config })
                 );
 
                 for (const post of posts) {
                     const { dirname = "" } = post;
-                    await copyDirectory(dirname, BUILD_DIRECTORY);
                     await writeFile(
-                        join(BUILD_DIRECTORY, dirname, "index.html"),
+                        join(dirname, INDEX_FILE),
                         postTemplate(post)
                     );
                 }

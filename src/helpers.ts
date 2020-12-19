@@ -1,6 +1,7 @@
 import { promises } from "fs";
 import { dirname, join, relative } from "path";
 import { VFile } from "vfile";
+import { config } from "./config";
 import { CONTENT_FILE, POSTS_DIRECTORY } from "./constants";
 import { transform, VFileData } from "./transform";
 
@@ -11,6 +12,9 @@ export async function getPost(postId: string): Promise<VFile> {
 
     const vFile = await transform(path);
     (vFile.data as VFileData).url = toAbsoluteUrl(vFile.dirname || "");
+    for (const [key, value] of Object.entries(config)) {
+        vFile[key] = value;
+    }
 
     return vFile;
 }
@@ -38,6 +42,10 @@ export async function getPostIds(): Promise<string[]> {
 
 export function paginate<T>(array: T[], pageSize: number): T[][] {
     const results = [] as T[][];
+
+    if (!config.orderPostsById) {
+        array.reverse();
+    }
 
     for (
         let startIndex = 0;

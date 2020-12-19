@@ -1,9 +1,7 @@
-export const BUILD_DIRECTORY = "docs";
+export const INDEX_FILE = "index.html";
 
-export const CONTENT_FILE = "content.md";
 export const POSTS_DIRECTORY = "posts";
-
-export const STATIC_DIRECTORY = "static";
+export const CONTENT_FILE = "content.md";
 
 export const TEMPLATES_DIRECTORY = "templates";
 export const INDEX_TEMPLATE = "index.pug";

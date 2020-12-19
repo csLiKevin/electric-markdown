@@ -1,10 +1,14 @@
 ---
 tags: []
-title: Electric Markdown
+title: Home
 publishDate: null
 ---
 
-# ⚡ {{ frontmatter.title }}
+# ⚡ Electric Markdown
+
+https://electric.kevinli.us · https://csLiKevin.github.io/electric-markdown
+
+[Repository](https://github.com/csLiKevin/electric-markdown)
 
 An opinionated static site generator.
 
@@ -33,6 +37,16 @@ npm start
 View your website locally at [http://localhost:3001/]().
 
 Site automatically reloads when Markdown files are updated.
+
+## Configuration
+
+Configure how the site is generated in [config.ts](../../config.ts).
+
+|key|default|description|
+|---           |---                |---                      |
+|homepage      |`00000001`         |Post to show on homepage.|
+|orderPostsById|`True`             |Order posts by their id. |
+|siteTitle     |`Electric Markdown`|Name of website.         |
 
 ## Posts
 

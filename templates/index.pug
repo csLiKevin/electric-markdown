@@ -3,5 +3,8 @@ extends base.pug
 block globals
     - const { title } = data.frontmatter
 
+block title
+    = siteTitle
+
 block append body
-    | !{contents}
+    != contents
