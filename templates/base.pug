@@ -5,22 +5,15 @@ html(lang="en")
         block head
             link(href="/static/favicon.ico" rel="shortcut icon")
             link(href="/static/water.min.css" rel="stylesheet")
+            link(href="/static/custom.css", rel="stylesheet")
             title
                 block title
                     = `${title} | ${siteTitle}`
-            style.
-                .icon.icon-link {
-                    margin-right: 8px;
-                }
-                .icon.icon-link:after {
-                    content: "#";
-                }
-                .preview {
-                    max-height: 350px;
-                    overflow: hidden;
-                }
-                .tag:not(:last-child) {
-                    margin-right: 8px;
-                }
     body
         block body
+            nav.navbar
+                a(href="/")
+                    input.nav-button(type="button" value="Home")
+                a(href="/posts")
+                    input.nav-button(type="button" value="Posts")
+            nav.navbar-placeholder

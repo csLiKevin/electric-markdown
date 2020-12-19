@@ -28,6 +28,12 @@ npm run manage -- add "A New Post Title"
 npm run manage -- build
 ```
 
+### Delete Generated Files
+
+```bash
+npm run manage -- clean
+```
+
 ### Preview Website
 
 ```bash
