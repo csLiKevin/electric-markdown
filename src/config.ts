@@ -1,6 +1,6 @@
 export const config = {
     homepage: "00000001",
-    orderPostsById: true,
+    showRecentFirst: false,
     siteTitle: "Electric Markdown",
 };
 

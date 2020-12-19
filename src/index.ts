@@ -7,7 +7,7 @@ import {
     POST_TEMPLATE,
     TEMPLATES_DIRECTORY,
 } from "./constants";
-import { getPost, getPosts } from "./helpers";
+import { getPost, getPosts, sortPostsByPublishDate } from "./helpers";
 
 async function asyncResponse(
     callback: () => Promise<void>,
@@ -25,7 +25,7 @@ const app = express();
 app.set("views", TEMPLATES_DIRECTORY);
 app.set("view engine", "pug");
 
-app.use(express.static("."));
+app.use(express.static(".", { index: false }));
 
 app.get("/", async (_, response, next) => {
     await asyncResponse(async () => {
@@ -42,6 +42,9 @@ app.get("/posts", async (request, response, next) => {
 
     await asyncResponse(async () => {
         const posts = await getPosts(Number(page));
+        if (config.showRecentFirst) {
+            sortPostsByPublishDate(posts);
+        }
         response.render(POSTS_TEMPLATE, {
             posts: posts,
             title: "Posts",

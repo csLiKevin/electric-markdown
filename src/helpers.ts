@@ -7,6 +7,29 @@ import { transform, VFileData } from "./transform";
 
 const { unlink, opendir, readdir } = promises;
 
+async function* walk(path: string): AsyncGenerator<string, void, void> {
+    for await (const dirent of await opendir(path)) {
+        const entry = join(path, dirent.name);
+        if (dirent.isDirectory()) {
+            yield* walk(entry);
+        }
+
+        yield entry;
+    }
+}
+
+export async function deleteGeneratedFiles(): Promise<void> {
+    for await (const filePath of walk(POSTS_DIRECTORY)) {
+        if (filePath.endsWith(INDEX_FILE)) {
+            console.log("Deleting:", filePath);
+            await unlink(filePath);
+        }
+    }
+
+    console.log("Deleting:", INDEX_FILE);
+    await unlink(INDEX_FILE);
+}
+
 export async function getPost(postId: string): Promise<VFile> {
     const path = join(POSTS_DIRECTORY, postId, CONTENT_FILE);
 
@@ -43,10 +66,6 @@ export async function getPostIds(): Promise<string[]> {
 export function paginate<T>(array: T[], pageSize: number): T[][] {
     const results = [] as T[][];
 
-    if (!config.orderPostsById) {
-        array.reverse();
-    }
-
     for (
         let startIndex = 0;
         startIndex < array.length;
@@ -63,25 +82,11 @@ export function toAbsoluteUrl(path: string): string {
     return `/${relative(".", path)}`.replace(/\\/g, "/");
 }
 
-async function* walk(path: string): AsyncGenerator<string, void, void> {
-    for await (const dirent of await opendir(path)) {
-        const entry = join(path, dirent.name);
-        if (dirent.isDirectory()) {
-            yield* walk(entry);
-        }
-
-        yield entry;
-    }
-}
-
-export async function deleteGeneratedFiles(): Promise<void> {
-    for await (const filePath of walk(POSTS_DIRECTORY)) {
-        if (filePath.endsWith(INDEX_FILE)) {
-            console.log("Deleting:", filePath);
-            await unlink(filePath);
-        }
-    }
-
-    console.log("Deleting:", INDEX_FILE);
-    await unlink(INDEX_FILE);
+export function sortPostsByPublishDate(posts: VFile[]): void {
+    posts.sort(
+        // Put posts with the more recent publish date first.
+        (left, right) =>
+            Number((right.data as VFileData).frontmatter.publishDate) -
+            Number((left.data as VFileData).frontmatter.publishDate)
+    );
 }

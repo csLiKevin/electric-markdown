@@ -26,7 +26,7 @@
 <h3 id="preview-website"><a aria-hidden="true" tabindex="-1" href="#preview-website"><span class="icon icon-link"></span></a>Preview Website</h3>
 <pre><code>npm start
 </code></pre>
-<p>View your website locally at <a href="">http://localhost:3001/</a>.</p>
+<p>View your website locally at <a href="http://localhost:3001" target="_blank" rel="nofollow noopener noreferrer">http://localhost:3001</a>.</p>
 <p>Site automatically reloads when Markdown files are updated.</p>
 <h2 id="configuration"><a aria-hidden="true" tabindex="-1" href="#configuration"><span class="icon icon-link"></span></a>Configuration</h2>
 <p>Configure how the site is generated in <a href="/src/config.ts">config.ts</a>.</p>
@@ -45,9 +45,9 @@
       <td>Post to show on homepage.</td>
     </tr>
     <tr>
-      <td>orderPostsById</td>
-      <td><code>True</code></td>
-      <td>Order posts by their id.</td>
+      <td>showRecentFirst</td>
+      <td><code>false</code></td>
+      <td>Order posts by their publish date.</td>
     </tr>
     <tr>
       <td>siteTitle</td>
@@ -75,11 +75,11 @@ publishDate: null
 ---
 </code></pre>
 <ul>
-  <li><code>publishDate</code>: Setting this to <code>null</code> will prevent this post from being included in the generated site.</li>
+  <li><code>publishDate</code>: Set to <code>null</code> to prevent this post from being included in the generated site.</li>
   <li><code>tags</code>: List of terms included at the bottom of a post.</li>
   <li><code>title</code>: Used as the page title.</li>
 </ul>
-<p>You can add any additional data you want.</p>
+<p>You can add any extra data you want.</p>
 <h3 id="variables"><a aria-hidden="true" tabindex="-1" href="#variables"><span class="icon icon-link"></span></a>Variables</h3>
 <p>Frontmatter can be referenced in your post content with <code>{{ frontmatter.title }}</code>.</p>
 <p>Dot notation is supported: <code>{{ frontmatter.tags.0 }}</code>.</p>

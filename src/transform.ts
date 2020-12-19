@@ -49,7 +49,10 @@ import { toAbsoluteUrl } from "./helpers";
 
 const production = process.env.NODE_ENV === "production";
 
-export type VFileData = Record<string, unknown>;
+export type VFileData = {
+    frontmatter: { [key: string]: unknown };
+    [key: string]: unknown;
+};
 
 function noOpAttacher(): void {
     return undefined;
@@ -58,10 +61,10 @@ function noOpAttacher(): void {
 function remarkFrontmatterYaml(): Transformer {
     return (node, vFile) => {
         visit(node, "yaml", ({ value }) => {
-            const data = vFile.data as { frontmatter: VFileData };
+            const data = vFile.data as VFileData;
             data.frontmatter = {
                 ...data.frontmatter,
-                ...(safeLoad(value as string) as VFileData),
+                ...(safeLoad(value as string) as { [key: string]: unknown }),
             };
         });
     };

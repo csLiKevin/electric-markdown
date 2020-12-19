@@ -1,7 +1,7 @@
 ---
 tags: []
 title: Home
-publishDate: null
+publishDate: 2020-12-18
 ---
 
 # ⚡ Electric Markdown
@@ -34,7 +34,7 @@ npm run manage -- build
 npm start
 ```
 
-View your website locally at [http://localhost:3001/]().
+View your website locally at [http://localhost:3001](http://localhost:3001).
 
 Site automatically reloads when Markdown files are updated.
 
@@ -43,10 +43,10 @@ Site automatically reloads when Markdown files are updated.
 Configure how the site is generated in [config.ts](../../src/config.ts).
 
 |key|default|description|
-|---           |---                |---                      |
-|homepage      |`00000001`         |Post to show on homepage.|
-|orderPostsById|`True`             |Order posts by their id. |
-|siteTitle     |`Electric Markdown`|Name of website.         |
+|---            |---                |---                               |
+|homepage       |`00000001`         |Post to show on homepage.         |
+|showRecentFirst|`false`            |Order posts by their publish date.|
+|siteTitle      |`Electric Markdown`|Name of website.                  |
 
 ## Posts
 
@@ -76,11 +76,11 @@ publishDate: null
 ---
 ```
 
-- `publishDate`: Setting this to `null` will prevent this post from being included in the generated site.
+- `publishDate`: Set to `null` to prevent this post from being included in the generated site.
 - `tags`: List of terms included at the bottom of a post.
 - `title`: Used as the page title.
 
-You can add any additional data you want.
+You can add any extra data you want.
 
 ### Variables
 
