@@ -23,6 +23,9 @@ img {
     top: 0;
     width: 100%;
 }
+.navbar input[type="button"] {
+    display: initial;
+}
 /* Offset content. */
 .navbar-placeholder {
     height: 4px;
@@ -38,14 +41,13 @@ html {
     height: 58px;
     margin: -58px 0 0;
 }
-input.nav-button[type="button"] {
-    display: initial;
-}
 
-.preview {
-    max-height: 350px;
-    overflow: hidden;
-}
 .tag:not(:last-child) {
     margin-right: 8px;
+}
+
+.clearfix:after {
+    content: "";
+    clear:both;
+    display:table;
 }

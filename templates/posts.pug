@@ -1,7 +1,10 @@
 extends base.pug
 
 block append body
+    h1= title
     each post in posts
-        div
-            div.preview!= post
-            a(href=post.data.url) Read More
+        - const { publishDate, title } = post.data.frontmatter;
+        a(href=post.data.url)
+            h3.clearfix
+                span(style=`float: ${showRecentFirst ? "right" : "left"}`)= title
+                code(style=`float: ${showRecentFirst ? "left" : "right"}`)= formatDate(publishDate)

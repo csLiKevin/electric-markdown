@@ -67,7 +67,7 @@ app.get("/posts/:postId", async (request, response, next) => {
 app.listen(3000);
 
 create().init({
-    files: ["**/*.pug", "**/*.md"],
+    files: ["**/*.css", "**/*.md", "**/*.pug"],
     open: false,
     proxy: "localhost:3000",
     ui: false,

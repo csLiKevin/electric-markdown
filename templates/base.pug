@@ -6,6 +6,10 @@ html(lang="en")
             link(href="/static/favicon.ico" rel="shortcut icon")
             link(href="/static/water.min.css" rel="stylesheet")
             link(href="/static/custom.css", rel="stylesheet")
+            meta(charset="utf-8")
+            meta(name="description", content=siteDescription)
+            meta(name="keywords", content= `${(tags || []).join(", ")}`)
+            meta(name="viewport", content="width=device-width, initial-scale=1")
             title
                 block title
                     = `${title} | ${siteTitle}`
