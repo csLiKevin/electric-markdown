@@ -53,6 +53,7 @@ demandCommand()
                 await buildPostsPage(1)
             );
 
+            // TODO: Prevent unpublished posts from being generated.
             for (const postId of await getPostIds()) {
                 await writeFile(
                     join(POSTS_DIRECTORY, postId, INDEX_FILE),

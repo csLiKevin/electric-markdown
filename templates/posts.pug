@@ -7,4 +7,4 @@ block append body
         a(href=post.data.url)
             h3.clearfix
                 span(style=`float: ${showRecentFirst ? "right" : "left"}`)= title
-                code(style=`float: ${showRecentFirst ? "left" : "right"}`)= publishDate
+                code(style=`float: ${showRecentFirst ? "left" : "right"}`)= publishDate || "null"

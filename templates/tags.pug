@@ -1,0 +1,7 @@
+extends base.pug
+
+block append body
+    h1= title
+    each tag in tags
+        code.tag.
+            [#[a(href=`/tags/${tag}/`) #{tag}]]

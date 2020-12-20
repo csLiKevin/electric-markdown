@@ -1,6 +1,12 @@
 import { create } from "browser-sync";
 import express, { NextFunction } from "express";
-import { buildHomePage, buildPostPage, buildPostsPage } from "./helpers";
+import {
+    buildHomePage,
+    buildPostPage,
+    buildPostsPage,
+    buildTagPage,
+    buildTagsPage,
+} from "./helpers";
 
 async function asyncResponse(
     callback: () => Promise<void>,
@@ -40,6 +46,22 @@ app.get("/posts/:postId", async (request, response, next) => {
 
     await asyncResponse(async () => {
         response.send(await buildPostPage(postId));
+    }, next);
+});
+
+app.get("/tags", async (_, response, next) => {
+    await asyncResponse(async () => {
+        response.send(await buildTagsPage());
+    }, next);
+});
+
+app.get("/tags/:tag", async (request, response, next) => {
+    const {
+        params: { tag },
+    } = request;
+
+    await asyncResponse(async () => {
+        response.send(await buildTagPage(tag));
     }, next);
 });
 

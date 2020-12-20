@@ -12,5 +12,5 @@ https://electric.kevinli.us · https://csLiKevin.github.io/electric-markdown
 - Create a tags page.
 - Add search.
 - Variable support in links and images.
-- Add keywords and tags to meta tags.
 - Cache getPost in production mode.
+- Add posts to navbar

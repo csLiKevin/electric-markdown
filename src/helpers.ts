@@ -10,6 +10,7 @@ import {
     POSTS_DIRECTORY,
     POSTS_TEMPLATE,
     POST_TEMPLATE,
+    TAGS_TEMPLATE,
     TEMPLATES_DIRECTORY,
 } from "./constants";
 import { transform, VFileData } from "./transform";
@@ -65,6 +66,44 @@ export async function buildPostsPage(
     });
 }
 
+export async function buildTagPage(tag: string): Promise<string> {
+    const posts = [] as VFile[];
+    for (const post of await getPosts()) {
+        const {
+            frontmatter: { tags },
+        } = post.data as VFileData;
+
+        if (tags.includes(tag)) {
+            posts.push(post);
+        }
+    }
+
+    return renderFile(join(TEMPLATES_DIRECTORY, POSTS_TEMPLATE), {
+        posts: posts,
+        title: tag,
+        ...config,
+    });
+}
+
+export async function buildTagsPage(): Promise<string> {
+    const tagSet = new Set();
+    for (const post of await getPosts()) {
+        const {
+            frontmatter: { tags },
+        } = post.data as VFileData;
+        tags.forEach((tag) => tagSet.add(tag));
+    }
+
+    const tags = Array.from(tagSet);
+    tags.sort();
+
+    return renderFile(join(TEMPLATES_DIRECTORY, TAGS_TEMPLATE), {
+        tags: tags,
+        title: "Tags",
+        ...config,
+    });
+}
+
 export async function deleteGeneratedFiles(): Promise<void> {
     for await (const filePath of walk(POSTS_DIRECTORY)) {
         if (filePath.endsWith(INDEX_FILE)) {
@@ -77,12 +116,18 @@ export async function deleteGeneratedFiles(): Promise<void> {
     await unlink(INDEX_FILE);
 }
 
+const getPostMemo = {} as Record<string, VFile>;
 async function getPost(postId: string): Promise<VFile> {
+    if (production && getPostMemo[postId]) {
+        return getPostMemo[postId];
+    }
+
     const path = join(POSTS_DIRECTORY, postId, CONTENT_FILE);
 
     const vFile = await transform(path);
     const vFileData = vFile.data as VFileData;
-    vFileData.url = toAbsoluteUrl(vFile.dirname || "");
+    vFileData.postId = postId;
+    vFileData.url = `${toAbsoluteUrl(vFile.dirname || "")}/`;
 
     const {
         frontmatter: { publishDate },
@@ -96,6 +141,8 @@ async function getPost(postId: string): Promise<VFile> {
     for (const [key, value] of Object.entries(config)) {
         vFile[key] = value;
     }
+
+    getPostMemo[postId] = vFile;
 
     return vFile;
 }
