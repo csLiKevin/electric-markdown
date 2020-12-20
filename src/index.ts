@@ -1,13 +1,6 @@
 import { create } from "browser-sync";
 import express, { NextFunction } from "express";
-import { config } from "./config";
-import {
-    INDEX_TEMPLATE,
-    POSTS_TEMPLATE,
-    POST_TEMPLATE,
-    TEMPLATES_DIRECTORY,
-} from "./constants";
-import { getPost, getPosts, sortPostsByPublishDate } from "./helpers";
+import { buildHomePage, buildPostPage, buildPostsPage } from "./helpers";
 
 async function asyncResponse(
     callback: () => Promise<void>,
@@ -22,16 +15,11 @@ async function asyncResponse(
 
 const app = express();
 
-app.set("views", TEMPLATES_DIRECTORY);
-app.set("view engine", "pug");
-
 app.use(express.static(".", { index: false }));
 
 app.get("/", async (_, response, next) => {
     await asyncResponse(async () => {
-        const { homepage } = config;
-        const post = await getPost(homepage);
-        response.render(INDEX_TEMPLATE, post);
+        response.send(await buildHomePage());
     }, next);
 });
 
@@ -41,15 +29,7 @@ app.get("/posts", async (request, response, next) => {
     } = request;
 
     await asyncResponse(async () => {
-        const posts = await getPosts(Number(page));
-        if (config.showRecentFirst) {
-            sortPostsByPublishDate(posts);
-        }
-        response.render(POSTS_TEMPLATE, {
-            posts: posts,
-            title: "Posts",
-            ...config,
-        });
+        response.send(await buildPostsPage(Number(page)));
     }, next);
 });
 
@@ -59,8 +39,7 @@ app.get("/posts/:postId", async (request, response, next) => {
     } = request;
 
     await asyncResponse(async () => {
-        const post = await getPost(postId);
-        response.render(POST_TEMPLATE, post);
+        response.send(await buildPostPage(postId));
     }, next);
 });
 

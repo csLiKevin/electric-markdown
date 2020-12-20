@@ -5,7 +5,6 @@ declare module "dictionary-en";
 declare module "rehype-format";
 
 declare module "remark-capitalize";
-declare module "remark-emoji";
 declare module "remark-normalize-headings";
 declare module "remark-numbered-footnote-labels";
 declare module "remark-preset-lint-markdown-style-guide";

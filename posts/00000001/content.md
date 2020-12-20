@@ -52,6 +52,7 @@ Configure how the site is generated in [config.ts](../../src/config.ts).
 |---            |---                |---                               |
 |formatDate     |`Date.toISOString` |Controls how dates are displayed. |
 |homepage       |`00000001`         |Post to show on homepage.         |
+|production     |`false`            |Disable warnings.                 |
 |showRecentFirst|`false`            |Order posts by their publish date.|
 |siteTitle      |`Electric Markdown`|Name of website.                  |
 

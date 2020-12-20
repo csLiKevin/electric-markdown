@@ -45,12 +45,18 @@ import unified, { Transformer } from "unified";
 import visit from "unist-util-visit";
 import { URL } from "url";
 import { Node } from "unist";
+import { config } from "./config";
 import { toAbsoluteUrl } from "./helpers";
 
-const production = process.env.NODE_ENV === "production";
+const { production } = config;
 
 export type VFileData = {
-    frontmatter: { [key: string]: unknown };
+    frontmatter: {
+        publishDate: Date | null;
+        tags: string[];
+        title: string;
+        [key: string]: unknown;
+    };
     [key: string]: unknown;
 };
 

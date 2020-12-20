@@ -2,27 +2,16 @@ process.env.NODE_ENV = "production";
 
 import { promises } from "fs";
 import { join } from "path";
-import { compileFile } from "pug";
 import { demandCommand } from "yargs";
-import { config } from "./config";
+import { CONTENT_FILE, INDEX_FILE, POSTS_DIRECTORY } from "./constants";
 import {
-    CONTENT_FILE,
-    INDEX_FILE,
-    INDEX_TEMPLATE,
-    POSTS_DIRECTORY,
-    POSTS_TEMPLATE,
-    POST_TEMPLATE,
-    TEMPLATES_DIRECTORY,
-} from "./constants";
-import {
+    buildHomePage,
+    buildPostPage,
+    buildPostsPage,
     deleteGeneratedFiles,
-    getPost,
     getPostIds,
-    paginate,
-    sortPostsByPublishDate,
 } from "./helpers";
 import { template } from "../templates/content";
-import { VFileData } from "./transform";
 
 const { mkdir, writeFile } = promises;
 
@@ -56,46 +45,19 @@ demandCommand()
         "build static website",
         () => undefined,
         async () => {
-            const homepageTemplate = compileFile(
-                join(TEMPLATES_DIRECTORY, INDEX_TEMPLATE)
-            );
-            const postTemplate = compileFile(
-                join(TEMPLATES_DIRECTORY, POST_TEMPLATE)
-            );
-            const postsTemplate = compileFile(
-                join(TEMPLATES_DIRECTORY, POSTS_TEMPLATE)
+            await writeFile(INDEX_FILE, await buildHomePage());
+
+            // TODO: Support pagination.
+            await writeFile(
+                join(POSTS_DIRECTORY, INDEX_FILE),
+                await buildPostsPage(1)
             );
 
-            const { homepage, showRecentFirst } = config;
-            const post = await getPost(homepage);
-            if ((post.data as VFileData).frontmatter.publishDate === null) {
-                throw new Error("Homepage is not published.");
-            }
-            await writeFile(INDEX_FILE, homepageTemplate(post));
-
-            const postIds = await getPostIds();
-            const posts = (
-                await Promise.all(postIds.map((postId) => getPost(postId)))
-            ).filter(
-                (post) => (post.data as VFileData).frontmatter.publishDate
-            );
-            if (showRecentFirst) {
-                sortPostsByPublishDate(posts);
-            }
-            const pages = paginate(posts, 10);
-            for (const page of pages) {
+            for (const postId of await getPostIds()) {
                 await writeFile(
-                    join(POSTS_DIRECTORY, INDEX_FILE),
-                    postsTemplate({ posts: page, ...config })
+                    join(POSTS_DIRECTORY, postId, INDEX_FILE),
+                    await buildPostPage(postId)
                 );
-
-                for (const post of page) {
-                    const { dirname = "" } = post;
-                    await writeFile(
-                        join(dirname, INDEX_FILE),
-                        postTemplate(post)
-                    );
-                }
             }
         }
     )
