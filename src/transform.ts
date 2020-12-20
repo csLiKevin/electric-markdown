@@ -57,6 +57,8 @@ export type VFileData = {
         title: string;
         [key: string]: unknown;
     };
+    postId: string;
+    url: string;
     [key: string]: unknown;
 };
 

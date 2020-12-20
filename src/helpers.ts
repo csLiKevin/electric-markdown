@@ -10,6 +10,7 @@ import {
     POSTS_DIRECTORY,
     POSTS_TEMPLATE,
     POST_TEMPLATE,
+    TAGS_DIRECTORY,
     TAGS_TEMPLATE,
     TEMPLATES_DIRECTORY,
 } from "./constants";
@@ -112,6 +113,13 @@ export async function deleteGeneratedFiles(): Promise<void> {
         }
     }
 
+    for await (const filePath of walk(TAGS_DIRECTORY)) {
+        if (filePath.endsWith(INDEX_FILE)) {
+            console.log("Deleting:", filePath);
+            await unlink(filePath);
+        }
+    }
+
     console.log("Deleting:", INDEX_FILE);
     await unlink(INDEX_FILE);
 }
@@ -147,7 +155,7 @@ async function getPost(postId: string): Promise<VFile> {
     return vFile;
 }
 
-async function getPosts(): Promise<VFile[]> {
+export async function getPosts(): Promise<VFile[]> {
     const postIds = await getPostIds();
     const posts = (
         await Promise.all(postIds.map((postId) => getPost(postId)))

@@ -8,3 +8,5 @@ export const INDEX_TEMPLATE = "index.pug";
 export const POST_TEMPLATE = "post.pug";
 export const POSTS_TEMPLATE = "posts.pug";
 export const TAGS_TEMPLATE = "tags.pug";
+
+export const TAGS_DIRECTORY = "tags";
