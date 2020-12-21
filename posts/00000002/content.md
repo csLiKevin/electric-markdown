@@ -6,7 +6,7 @@ publishDate: 2020-12-06
 
 # {{ frontmatter.title }}
 
-Published on {{ frontmatter.publishDate }}
+This haiku sums up 2020 well.
 
 > We isolate now  
 > So when we gather again  

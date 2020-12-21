@@ -5,6 +5,4 @@ publishDate: null
 ---
 
 # {{ frontmatter.title }}
-
-Published on {{ frontmatter.publishDate }}
 `;

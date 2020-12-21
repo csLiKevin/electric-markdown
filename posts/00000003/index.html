@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><link href="/static/favicon.ico" rel="shortcut icon"><link href="/static/water.min.css" rel="stylesheet"><link href="/static/custom.css" rel="stylesheet"><meta charset="utf-8"><meta name="description" content="An opinionated static site generator. Focus on your content, generate everything else."><meta name="keywords" content="python, programming"><meta name="viewport" content="width=device-width, initial-scale=1"><title>-1 // 2 = -1 | Electric Markdown</title></head><body><nav class="navbar"><a href="/"><input class="nav-button" type="button" value="Home"></a><a href="/posts/"><input class="nav-button" type="button" value="Posts"></a></nav><nav class="navbar-placeholder"></nav>
+<h1 id="-1--2---1"><a aria-hidden="true" tabindex="-1" href="#-1--2---1"><span class="icon icon-link"></span></a>-1 // 2 = -1</h1>
+<p>The following results in an infinite loop:</p>
+<pre><code>counter = -10
+while counter &#x3C; 0:
+    counter //= 2
+</code></pre>
+<p>Folks coming from other languages such as Java might mistakenly use <code>//</code> for integer division in Python.</p>
+<p>At first glance it appears to work the same way.</p>
+<pre><code>>>> 7 // 3
+2
+>>> 1 // 2
+0
+</code></pre>
+<p>But when we use it with negative numbers the results are unexpected.</p>
+<pre><code>>>> -7 // 3
+-3
+>>> -1 // 2
+-1
+</code></pre>
+<p>Normally integer division would truncate the decimal values and we’d expect <code>-2</code> and <code>0</code> respectively.</p>
+<p>Python’s <code>//</code> operator actually does floor division and rounds down instead of truncating decimals.</p>
+<p>For integer division take the <code>floor</code> of positive division results and <code>ceil</code> of negative division results.</p>
+<pre><code>from math import ceil, floor
+
+def integer_division(a, b):
+    result = a / b
+    if result > 0:
+        return floor(result)
+    return ceil(result)
+</code></pre>
+<h6>Tags</h6><p><code class="tag">[<a href="/tags/python/">python</a>]</code><code class="tag">[<a href="/tags/programming/">programming</a>]</code></p><h6>Published</h6><p><code>2020-12-20</code></p></body></html>

@@ -1,7 +1,7 @@
 extends base.pug
 
 block globals
-    - const { tags, title } = data.frontmatter;
+    - const { publishDate, tags, title } = data.frontmatter;
 
 block append body
     | !{contents}
@@ -12,3 +12,6 @@ block append body
         each tag in tags
             code.tag.
                 [#[a(href=`/tags/${tag}/`) #{tag}]]
+    h6 Published
+    p
+        code= publishDate || "null"
