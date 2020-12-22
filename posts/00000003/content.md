@@ -1,5 +1,5 @@
 ---
-tags: [python, programming]
+tags: [programming, python]
 title: -1 // 2 = -1
 publishDate: 2020-12-20
 ---

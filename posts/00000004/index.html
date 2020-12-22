@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><link href="/static/favicon.ico" rel="shortcut icon"><link href="/static/water.min.css" rel="stylesheet"><link href="/static/custom.css" rel="stylesheet"><meta charset="utf-8"><meta name="description" content="An opinionated static site generator. Focus on your content, generate everything else."><meta name="keywords" content="javascript, programming"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Regular Expressions Are Stateful (Sometimes) | Electric Markdown</title></head><body><nav class="navbar"><a href="/"><input class="nav-button" type="button" value="Home"></a><a href="/posts/"><input class="nav-button" type="button" value="Posts"></a></nav><nav class="navbar-placeholder"></nav>
+<h1 id="regular-expressions-are-stateful-sometimes"><a aria-hidden="true" tabindex="-1" href="#regular-expressions-are-stateful-sometimes"><span class="icon icon-link"></span></a>Regular Expressions Are Stateful (Sometimes)</h1>
+<p>Regular expressions are stateful when they have the global or sticky flag.</p>
+<pre><code>const globalFlagRegexp = /abc/g;
+const stickyFlagRegexp = /abc/y;
+</code></pre>
+<p>Reusing regular expressions can lead to bugs if their state isn’t taken into account.</p>
+<p>Consider the following:</p>
+<pre><code>const myRegExp = /abc/g;
+const myStrings = ["abc", "abcdef", "abcdefghi"];
+
+myRegExp.exec(myStrings[0]);
+myRegExp.exec(myStrings[1]);
+myRegExp.exec(myStrings[2]);
+</code></pre>
+<p>You may expect <code>exec</code> to return a match each time but the second call actually returns <code>null</code>.</p>
+<p>A regular expression’s <code>exec</code> method updates its <code>lastIndex</code> property on each call.</p>
+<p><code>lastIndex</code> keeps track of where the last run left off, similar to how a file pointers work.</p>
+<pre><code>myRegExp.exec(myStrings[0]); // lastIndex = 3
+myRegExp.exec(myStrings[1]); // lastIndex = 0
+myRegExp.exec(myStrings[2]); // lastIndex = 3
+</code></pre>
+<p>The first run set <code>lastIndex</code> to 3. When <code>exec</code> ran a second time it did not find <code>abc</code> in the remaining <code>def</code>, returned <code>null</code> and reset <code>lastIndex</code> to 0.</p>
+<p>The intended use of <code>exec</code> is to find multiple instances of a regular expression in a single string.</p>
+<pre><code>const myRegExp = /abc/g;
+const myString = "abc-abc-abc";
+
+myRegExp.exec(myString);
+myRegExp.exec(myString);
+myRegExp.exec(myString);
+</code></pre>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec" target="_blank" rel="nofollow noopener noreferrer">MDN Web Docs</a></p>
+<h6>Tags</h6><p><code class="tag">[<a href="/tags/javascript/">javascript</a>]</code><code class="tag">[<a href="/tags/programming/">programming</a>]</code></p><h6>Published</h6><p><code>2020-12-21</code></p></body></html>
